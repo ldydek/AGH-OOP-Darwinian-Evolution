@@ -21,6 +21,13 @@ public class SimulationEngine implements Runnable {
                 if (element.getClass() == Plant.class) continue;
                 else {
                     animals1.add(element);
+                    if (map1.getNumberOfGenome().get(((Animal) element).getGenes()) == null) {
+                        map1.getNumberOfGenome().put(((Animal) element).getGenes(), 0);
+                    }
+                    else {
+                        int a = map1.getNumberOfGenome().get(((Animal) element).getGenes());
+                        map1.getNumberOfGenome().put(((Animal) element).getGenes(), a+1);
+                    }
                 }
             }
         }
@@ -29,6 +36,13 @@ public class SimulationEngine implements Runnable {
                 if (element.getClass() == Plant.class) continue;
                 else {
                     animals2.add(element);
+                    if (map2.getNumberOfGenome().get(((Animal) element).getGenes()) == null) {
+                        map2.getNumberOfGenome().put(((Animal) element).getGenes(), 0);
+                    }
+                    else {
+                        int a = map2.getNumberOfGenome().get(((Animal) element).getGenes());
+                        map2.getNumberOfGenome().put(((Animal) element).getGenes(), a+1);
+                    }
                 }
             }
         }
@@ -89,8 +103,8 @@ public class SimulationEngine implements Runnable {
             System.out.println(animals2.size() + " " + map2.getHashMap().size());
             positionChanged(new Vector2d(0, 0), new Vector2d(0, 0), new Plant(new Vector2d(0, 0)));
         }
-//        map1Run();
-//        map2Run();
+        map1Run();
+        map2Run();
         positionChanged(new Vector2d(0, 0), new Vector2d(0, 0), new Plant(new Vector2d(0, 0)));
     }
 

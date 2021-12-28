@@ -3,6 +3,7 @@ package agh.ics.project1.gui;
 import agh.ics.project1.*;
 import com.sun.javafx.scene.control.IntegerField;
 import javafx.application.Application;
+import javafx.scene.chart.Chart;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -11,11 +12,13 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.geometry.*;
-
 import java.util.ArrayList;
 import java.util.Map;
 import javafx.application.Platform;
 import javafx.scene.Node;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 
 public class App extends Application implements IPositionChangeObserver {
     private GridPane gridPane;
@@ -25,6 +28,18 @@ public class App extends Application implements IPositionChangeObserver {
     private MapWithoutBorders map2;
     private SimulationEngine engine;
     private int space;
+    private int day = 0;
+    private final VBox vBox1 = new VBox();
+    private final VBox vBox2 = new VBox();
+    private final HBox vBox1VBox2 = new HBox();
+    private final VBox finalVBox = new VBox();
+    private NumberAxis xAxis1 = new NumberAxis();
+    private NumberAxis yAxis1 = new NumberAxis();
+    private NumberAxis xAxis2 = new NumberAxis();
+    private NumberAxis yAxis2 = new NumberAxis();
+    private final LineChart lineChart1 = new LineChart(xAxis1, yAxis1);
+    private final LineChart lineChart2 = new LineChart(xAxis2, yAxis2);
+
 
 
     public void init() {
@@ -99,7 +114,7 @@ public class App extends Application implements IPositionChangeObserver {
         vBox.setSpacing(10);
 
         Scene startScene = new Scene(vBox, 800, 800);
-        Scene scene = new Scene(gridPane, 1250, 650);
+        Scene scene = new Scene(finalVBox, 1250, 650);
         button.setOnAction(e -> switchScenes(scene, mapWidthBox, mapHeightBox, startingEnergyBox, moveEnergyBox,
                 plantEnergyBox, jungleMapRatioBox, animalQuantityBox));
         primaryStage.setScene(startScene);
@@ -120,53 +135,51 @@ public class App extends Application implements IPositionChangeObserver {
         Plant.setPlantEnergy(plantEnergy);
         map1 = new MapWithBorders(mapHeight, mapWidth, jungleMapRatio, animalQuantity);
         map2 = new MapWithoutBorders(mapHeight, mapWidth, jungleMapRatio, animalQuantity);
-        space = map1.getMapHeight() + 1;
+        space = map1.getMapHeight() + 5;
         stage.setScene(scene);
         stage.show();
         engine = new SimulationEngine(map1, map2);
         engine.addObserver(this);
-//        makeGridPane();
         colorGridPane();
         addObjects();
+        addStatistics();
         Thread thread = new Thread(engine);
         thread.start();
     }
 
-    private void makeGridPane() {
-        int ctr = 1;
-        Vector2d lowerLeft = map1.getMapLowerLeft();
-        Vector2d upperRight = map1.getMapUpperRight();
+    private void addStatistics() {
+        vBox1.getChildren().clear();
+        vBox2.getChildren().clear();
+        vBox1.getChildren().addAll(animalQuantityLabel(map1), plantQuantityLabel(map1), averageEnergyLabel(map1),
+                dominantGenome(map1), drawALineChart1(map1));
+        vBox2.getChildren().addAll(animalQuantityLabel(map2), plantQuantityLabel(map2), averageEnergyLabel(map2),
+                dominantGenome(map2), drawALineChart2(map1));
+        vBox1VBox2.getChildren().clear();
+        vBox1VBox2.getChildren().addAll(vBox1, vBox2);
+        vBox1VBox2.setSpacing(space*10);
+        finalVBox.getChildren().clear();
+        finalVBox.getChildren().addAll(gridPane, vBox1VBox2);
+        day++;
+    }
 
-        for (int i = upperRight.getY(); i >= lowerLeft.getY(); i--) {
-            Label label = new Label(Integer.toString(i));
-            GridPane.setHalignment(label, HPos.CENTER);
-            gridPane.getRowConstraints().add(new RowConstraints(40));
-            ctr++;
-        }
+    private Chart drawALineChart1(AbstractWorldMap map) {
+        xAxis1.setLabel("Quantity");
+        yAxis1.setLabel("Number of days");
+        XYChart.Series dataSeries = new XYChart.Series();
+        dataSeries.setName("Animals quantity");
+        dataSeries.getData().add(new XYChart.Data(day, map.animalQuantity()));
+        lineChart1.getData().add(dataSeries);
+        return lineChart1;
+    }
 
-        ctr = 1;
-        for (int i = lowerLeft.getX(); i <= upperRight.getX(); i++) {
-            Label label = new Label(Integer.toString(i));
-            GridPane.setHalignment(label, HPos.CENTER);
-            gridPane.getColumnConstraints().add(new ColumnConstraints(40));
-            ctr++;
-        }
-
-        ctr = 1;
-        for (int i = lowerLeft.getX() + space; i <= upperRight.getX() + space + 1; i++) {
-            Label label = new Label(Integer.toString(i));
-            GridPane.setHalignment(label, HPos.CENTER);
-            gridPane.getColumnConstraints().add(new ColumnConstraints(40));
-            ctr++;
-        }
-
-        ctr = 1;
-        for (int i = upperRight.getY(); i >= lowerLeft.getY(); i--) {
-            Label label = new Label(Integer.toString(i));
-            GridPane.setHalignment(label, HPos.CENTER);
-            gridPane.getRowConstraints().add(new RowConstraints(40));
-            ctr++;
-        }
+    private Chart drawALineChart2(AbstractWorldMap map) {
+        xAxis2.setLabel("Quantity");
+        yAxis2.setLabel("Number of days");
+        XYChart.Series dataSeries = new XYChart.Series();
+        dataSeries.setName("Animals quantity");
+        dataSeries.getData().add(new XYChart.Data(day, map.animalQuantity()));
+        lineChart2.getData().add(dataSeries);
+        return lineChart2;
     }
 
     private void colorGridPane() {
@@ -176,32 +189,40 @@ public class App extends Application implements IPositionChangeObserver {
             for (int j = lowerLeft.getX(); j <= upperRight.getX(); j++) {
                 Vector2d position = new Vector2d(j, i);
                 StackPane pane = new StackPane();
-                Rectangle rectangle = new Rectangle(20, 20);
+                Rectangle rectangle = new Rectangle(30, 30);
                 if (map1.jungleField(position)) {
                     rectangle.setFill(Color.DARKGREEN);
-//                    pane.setBackground(new Background(new BackgroundFill(Color.DARKGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
                 }
                 else {
                     rectangle.setFill(Color.GREEN);
-//                    pane.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));
                 }
                 pane.getChildren().add(rectangle);
                 gridPane.add(pane, j, i);
             }
         }
 
+        int a = map1.getMapHeight() + 1;
+        for (int b = 0; b < 10; b++) {
+            for (int i = upperRight.getY(); i >= lowerLeft.getY(); i--) {
+                StackPane pane = new StackPane();
+                Rectangle rectangle = new Rectangle(30, 30);
+                rectangle.setFill(Color.WHITE);
+                pane.getChildren().add(rectangle);
+                gridPane.add(pane, a, i);
+            }
+            a++;
+        }
+
         for (int i = upperRight.getY(); i >= lowerLeft.getY(); i--) {
             for (int j = lowerLeft.getX()+space; j <= upperRight.getX()+space; j++) {
                 Vector2d position = new Vector2d(j-space, i);
                 StackPane pane = new StackPane();
-                Rectangle rectangle = new Rectangle(20, 20);
+                Rectangle rectangle = new Rectangle(30, 30);
                 if (map2.jungleField(position)) {
                     rectangle.setFill(Color.DARKGREEN);
-//                    pane.setBackground(new Background(new BackgroundFill(Color.DARKGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
                 }
                 else {
                     rectangle.setFill(Color.GREEN);
-//                    pane.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));
                 }
                 pane.getChildren().add(rectangle);
                 gridPane.add(pane, j, i);
@@ -242,6 +263,23 @@ public class App extends Application implements IPositionChangeObserver {
             this.gridPane.getChildren().add(node);
             colorGridPane();
             addObjects();
+            addStatistics();
         });
+    }
+
+    private Label animalQuantityLabel(AbstractWorldMap map) {
+        return new Label("Animal quantity: " + map.animalQuantity());
+    }
+
+    private Label plantQuantityLabel(AbstractWorldMap map) {
+        return new Label("Plant quantity: " + map.plantQuantity());
+    }
+
+    private Label averageEnergyLabel(AbstractWorldMap map) {
+        return new Label("Average energy: " + map.averageEnergy());
+    }
+
+    private Label dominantGenome(AbstractWorldMap map) {
+        return new Label("Dominant genome: " + map.dominantGenome());
     }
 }

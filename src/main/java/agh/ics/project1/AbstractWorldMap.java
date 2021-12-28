@@ -13,6 +13,7 @@ public class AbstractWorldMap implements IWorldMap, IPositionChangeObserver, IEn
     protected int mapHeight;
     protected int mapWidth;
     protected Map<Vector2d, MapField> hashMap = new LinkedHashMap<>();
+    protected Map<Genes, Integer> numberOfGenomes = new LinkedHashMap<>();
     protected int a = getRandomNumber(0, mapHeight);
     protected int b = getRandomNumber(0, mapWidth);
     protected Vector2d position = new Vector2d(a, b);
@@ -143,15 +144,8 @@ public class AbstractWorldMap implements IWorldMap, IPositionChangeObserver, IEn
         }
     }
 
-    public ArrayList<Animal> copulate() {
-        ArrayList<Animal> animals = new ArrayList<>();
-        for (Vector2d position: hashMap.keySet()) {
-            Animal animal = hashMap.get(position).copulate();
-            if (animal != null) {
-                animals.add(animal);
-            }
-        }
-        return animals;
+    public Map<Genes, Integer> getNumberOfGenome() {
+        return numberOfGenomes;
     }
 
     public boolean jungleField(Vector2d position) {
@@ -173,7 +167,6 @@ public class AbstractWorldMap implements IWorldMap, IPositionChangeObserver, IEn
         for (Vector2d position: hashMap.keySet()) {
             for (IMapElement element: hashMap.get(position).getSortedSet()) {
                 if (element.getClass() == Plant.class) plantQuantity++;
-                else plantQuantity++;
             }
         }
         return plantQuantity;
@@ -190,8 +183,19 @@ public class AbstractWorldMap implements IWorldMap, IPositionChangeObserver, IEn
                 }
             }
         }
-        return averageEnergy/animalQuantity;
+        if (animalQuantity != 0 ) return averageEnergy/animalQuantity;
+        else return -10000;
     }
 
-
+    public Genes dominantGenome() {
+        int a = -1;
+        Genes genes = null;
+        for (Genes genome: numberOfGenomes.keySet()) {
+            if (numberOfGenomes.get(genome) > a) {
+                a = numberOfGenomes.get(genome);
+                genes = genome;
+            }
+        }
+        return genes;
+    }
 }

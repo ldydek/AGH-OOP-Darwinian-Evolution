@@ -25,4 +25,12 @@ public class Genes {
     public void setGene(int i, int j) {
         genes[i] = j;
     }
+
+    public String toString() {
+        String genes1 = "";
+        for (int i=0; i<32; i++) {
+            genes1 += genes[i];
+        }
+        return genes1;
+    }
 }
