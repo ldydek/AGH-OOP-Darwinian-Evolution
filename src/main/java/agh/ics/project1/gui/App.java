@@ -76,7 +76,7 @@ public class App extends Application implements IPositionChangeObserver {
         Label startingEnergyLabel = new Label("Starting energy: ");
         IntegerField startingEnergyInteger = new IntegerField();
         startingEnergyInteger.setEditable(true);
-        startingEnergyInteger.setValue(10);
+        startingEnergyInteger.setValue(20);
         startingEnergyBox.getChildren().addAll(startingEnergyLabel, startingEnergyInteger);
         mapHeightBox.setAlignment(Pos.BASELINE_LEFT);
 
