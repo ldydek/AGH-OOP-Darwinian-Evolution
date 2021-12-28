@@ -37,10 +37,14 @@ public class App extends Application implements IPositionChangeObserver {
     private NumberAxis yAxis1 = new NumberAxis();
     private NumberAxis xAxis2 = new NumberAxis();
     private NumberAxis yAxis2 = new NumberAxis();
+    private NumberAxis xAxis3 = new NumberAxis();
+    private NumberAxis yAxis3 = new NumberAxis();
+    private NumberAxis xAxis4 = new NumberAxis();
+    private NumberAxis yAxis4 = new NumberAxis();
     private final LineChart lineChart1 = new LineChart(xAxis1, yAxis1);
     private final LineChart lineChart2 = new LineChart(xAxis2, yAxis2);
-
-
+    private final LineChart lineChart3 = new LineChart(xAxis3, yAxis3);
+    private final LineChart lineChart4 = new LineChart(xAxis4, yAxis4);
 
     public void init() {
         gridPane = new GridPane();
@@ -114,7 +118,7 @@ public class App extends Application implements IPositionChangeObserver {
         vBox.setSpacing(10);
 
         Scene startScene = new Scene(vBox, 800, 800);
-        Scene scene = new Scene(finalVBox, 1250, 650);
+        Scene scene = new Scene(finalVBox, 1250, 800);
         button.setOnAction(e -> switchScenes(scene, mapWidthBox, mapHeightBox, startingEnergyBox, moveEnergyBox,
                 plantEnergyBox, jungleMapRatioBox, animalQuantityBox));
         primaryStage.setScene(startScene);
@@ -151,9 +155,9 @@ public class App extends Application implements IPositionChangeObserver {
         vBox1.getChildren().clear();
         vBox2.getChildren().clear();
         vBox1.getChildren().addAll(animalQuantityLabel(map1), plantQuantityLabel(map1), averageEnergyLabel(map1),
-                dominantGenome(map1), drawALineChart1(map1));
+                dominantGenome(map1), drawALineChart1(map1), drawALineChart3(map1));
         vBox2.getChildren().addAll(animalQuantityLabel(map2), plantQuantityLabel(map2), averageEnergyLabel(map2),
-                dominantGenome(map2), drawALineChart2(map1));
+                dominantGenome(map2), drawALineChart2(map1), drawALineChart4(map2));
         vBox1VBox2.getChildren().clear();
         vBox1VBox2.getChildren().addAll(vBox1, vBox2);
         vBox1VBox2.setSpacing(space*10);
@@ -166,7 +170,6 @@ public class App extends Application implements IPositionChangeObserver {
         xAxis1.setLabel("Quantity");
         yAxis1.setLabel("Number of days");
         XYChart.Series dataSeries = new XYChart.Series();
-        dataSeries.setName("Animals quantity");
         dataSeries.getData().add(new XYChart.Data(day, map.animalQuantity()));
         lineChart1.getData().add(dataSeries);
         return lineChart1;
@@ -176,10 +179,27 @@ public class App extends Application implements IPositionChangeObserver {
         xAxis2.setLabel("Quantity");
         yAxis2.setLabel("Number of days");
         XYChart.Series dataSeries = new XYChart.Series();
-        dataSeries.setName("Animals quantity");
         dataSeries.getData().add(new XYChart.Data(day, map.animalQuantity()));
         lineChart2.getData().add(dataSeries);
         return lineChart2;
+    }
+
+    private Chart drawALineChart3(AbstractWorldMap map) {
+        xAxis2.setLabel("Quantity");
+        yAxis2.setLabel("Number of days");
+        XYChart.Series dataSeries = new XYChart.Series();
+        dataSeries.getData().add(new XYChart.Data(day, map.plantQuantity()));
+        lineChart3.getData().add(dataSeries);
+        return lineChart3;
+    }
+
+    private Chart drawALineChart4(AbstractWorldMap map) {
+        xAxis2.setLabel("Quantity");
+        yAxis2.setLabel("Number of days");
+        XYChart.Series dataSeries = new XYChart.Series();
+        dataSeries.getData().add(new XYChart.Data(day, map.plantQuantity()));
+        lineChart4.getData().add(dataSeries);
+        return lineChart4;
     }
 
     private void colorGridPane() {
@@ -281,5 +301,9 @@ public class App extends Application implements IPositionChangeObserver {
 
     private Label dominantGenome(AbstractWorldMap map) {
         return new Label("Dominant genome: " + map.dominantGenome());
+    }
+
+    private Label averageAgeOfDeadAnimals(AbstractWorldMap map) {
+        return new Label("Average age of dead animals: " + map.averageAgeOfDeadAnimals());
     }
 }

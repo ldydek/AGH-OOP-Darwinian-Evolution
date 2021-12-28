@@ -10,6 +10,7 @@ public class Animal implements IMapElement {
     private Genes genes;
     private int turn;
     private final IWorldMap map;
+    private int lifeLength = 0;
     private ArrayList<IPositionChangeObserver> observers = new ArrayList<>();
     private ArrayList<IEnergyChangeObserver> observers1 = new ArrayList<>();
 
@@ -95,6 +96,7 @@ public class Animal implements IMapElement {
         }
         energy -= moveEnergy;
         energyChanged(this, this.position);
+        this.lifeLength++;
         if (energy <= 0) {
             return this.dead();
         }
@@ -157,5 +159,9 @@ public class Animal implements IMapElement {
 
     public void addObserver(IPositionChangeObserver observer) {
         observers.add(observer);
+    }
+
+    public int getLifeLength() {
+        return lifeLength;
     }
 }

@@ -4,14 +4,15 @@ package agh.ics.project1;
 import java.util.*;
 
 public class AbstractWorldMap implements IWorldMap, IPositionChangeObserver, IEnergyChangeObserver {
-//    nie będzie metody isOccupied, bo tym razem na jednym polu może być dużo elementów
-//    klasa MapWithBorders będzie zawierać dodatkową metodę uniemożliwiającą wyjście poza mapę (canMoveTo)
+
     protected final Vector2d jungleLowerLeft;
     protected final Vector2d jungleUpperRight;
     protected final Vector2d mapLowerLeft;
     protected final Vector2d mapUpperRight;
     protected int mapHeight;
     protected int mapWidth;
+    protected int deadAnimals = 0;
+    protected int totalAgeOfDeadAnimals = 0;
     protected Map<Vector2d, MapField> hashMap = new LinkedHashMap<>();
     protected Map<Genes, Integer> numberOfGenomes = new LinkedHashMap<>();
     protected int a = getRandomNumber(0, mapHeight);
@@ -174,16 +175,18 @@ public class AbstractWorldMap implements IWorldMap, IPositionChangeObserver, IEn
 
     public int averageEnergy() {
         int averageEnergy = 0;
-        int animalQuantity = 0;
+        ArrayList<IMapElement> animals = new ArrayList<>();
         for (Vector2d position: hashMap.keySet()) {
             for (IMapElement element: hashMap.get(position).getSortedSet()) {
                 if (element.getClass() == Animal.class) {
-                    averageEnergy += element.getEnergy();
-                    animalQuantity++;
+                    animals.add(element);
                 }
             }
         }
-        if (animalQuantity != 0 ) return averageEnergy/animalQuantity;
+        for (IMapElement animal: animals) {
+            averageEnergy += animal.getEnergy();
+        }
+        if (animals.size() != 0 ) return averageEnergy/animals.size();
         else return -10000;
     }
 
@@ -197,5 +200,17 @@ public class AbstractWorldMap implements IWorldMap, IPositionChangeObserver, IEn
             }
         }
         return genes;
+    }
+
+    public void increaseDeadAnimals() {
+        deadAnimals++;
+    }
+
+    public void increaseTotalAge(int a) {
+        totalAgeOfDeadAnimals += a;
+    }
+
+    public double averageAgeOfDeadAnimals() {
+        return totalAgeOfDeadAnimals / deadAnimals;
     }
 }

@@ -66,6 +66,8 @@ public class SimulationEngine implements Runnable {
             for (IMapElement animal : animals1) {
                 if (animal.move() != null) {
                     deadAnimals1.add((Animal) animal);
+                    map1.increaseDeadAnimals();
+                    map1.increaseTotalAge(((Animal) animal).getLifeLength());
                 }
                 Vector2d position = animal.getPosition();
                 if (map1.getHashMap().get(position) == null) continue;
@@ -87,6 +89,7 @@ public class SimulationEngine implements Runnable {
                 if (map2.getHashMap().get(position) == null) continue;
                 Animal object = map2.getHashMap().get(position).copulate();
                 if (object != null) {
+                    map2.increaseDeadAnimals();
                     bornAnimals2.add(object);
                 }
                 try {
@@ -99,8 +102,6 @@ public class SimulationEngine implements Runnable {
             animals1.addAll(bornAnimals1);
             animals2.removeAll(deadAnimals2);
             animals2.addAll(bornAnimals2);
-            System.out.println(animals1.size() + " " + map1.getHashMap().size());
-            System.out.println(animals2.size() + " " + map2.getHashMap().size());
             positionChanged(new Vector2d(0, 0), new Vector2d(0, 0), new Plant(new Vector2d(0, 0)));
         }
         map1Run();
@@ -138,7 +139,6 @@ public class SimulationEngine implements Runnable {
             }
             animals1.removeAll(deadAnimals1);
             animals1.addAll(bornAnimals1);
-            System.out.println("Pierwsza mapa: " + animals1.size() + " " + map1.getHashMap().size());
             positionChanged(new Vector2d(0, 0), new Vector2d(0, 0), new Plant(new Vector2d(0, 0)));
         }
     }
@@ -169,7 +169,6 @@ public class SimulationEngine implements Runnable {
             }
             animals2.removeAll(deadAnimals2);
             animals2.addAll(bornAnimals2);
-            System.out.println("Druga mapa: " + animals2.size() + " " + map2.getHashMap().size());
             positionChanged(new Vector2d(0, 0), new Vector2d(0, 0), new Plant(new Vector2d(0, 0)));
         }
     }
