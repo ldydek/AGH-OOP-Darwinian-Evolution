@@ -211,6 +211,7 @@ public class AbstractWorldMap implements IWorldMap, IPositionChangeObserver, IEn
     }
 
     public double averageAgeOfDeadAnimals() {
+        if (deadAnimals == 0) return 0;
         return totalAgeOfDeadAnimals / deadAnimals;
     }
 }

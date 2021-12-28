@@ -155,9 +155,9 @@ public class App extends Application implements IPositionChangeObserver {
         vBox1.getChildren().clear();
         vBox2.getChildren().clear();
         vBox1.getChildren().addAll(animalQuantityLabel(map1), plantQuantityLabel(map1), averageEnergyLabel(map1),
-                dominantGenome(map1), drawALineChart1(map1), drawALineChart3(map1));
+                dominantGenome(map1), averageAgeOfDeadAnimals(map1), drawALineChart1(map1), drawALineChart3(map1));
         vBox2.getChildren().addAll(animalQuantityLabel(map2), plantQuantityLabel(map2), averageEnergyLabel(map2),
-                dominantGenome(map2), drawALineChart2(map1), drawALineChart4(map2));
+                dominantGenome(map2), averageAgeOfDeadAnimals(map2), drawALineChart2(map1), drawALineChart4(map2));
         vBox1VBox2.getChildren().clear();
         vBox1VBox2.getChildren().addAll(vBox1, vBox2);
         vBox1VBox2.setSpacing(space*10);

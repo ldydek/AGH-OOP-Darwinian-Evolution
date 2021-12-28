@@ -51,8 +51,6 @@ public class SimulationEngine implements Runnable {
     @Override
     public void run() {
         while (!(animals1.size() == 0) && (!(animals2.size()==0))) {
-            System.out.println(animals1.size());
-            System.out.println(animals2.size());
             ArrayList<Animal> deadAnimals1 = new ArrayList<>();
             ArrayList<Animal> bornAnimals1 = new ArrayList<>();
             ArrayList<Animal> deadAnimals2 = new ArrayList<>();
